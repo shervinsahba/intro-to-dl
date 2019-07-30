@@ -1,0 +1,134 @@
+
+#######################################################################################################
+QUIZ 1.1 
+1.) Consider a vector [1,-2,0.5]. Apply a softmax transform and find the first component accurate to 2 decimal places.
+sol: 0.60
+notes: exp(1)/sum(exp([1,-2,0.5]))
+
+2.)
+Suppose you are solving a 5-class classification problem with 10 features. How many parameters would a linear model have?
+sol: 55
+notes: y = Wx + b would have 10x5 weights and 5 bias terms
+
+3.) There is an analytical solution for linear regression with MSE loss, but we usually prefer gradient descent. Why?
+sol:
++ Gradient descent is more scalable to a high number of features.
++ Gradient descent doesn't require matrix inversion
+- Gradient descent was specifically designed for MSE loss.
+- Gradient descent can find parameter values that give lower MSE than the analytical solution. 
+
+
+#######################################################################################################
+QUIZ 1.2
+
+2.)
+sol:
+- It requires multiple model fitting
++ It is sensitive to the particular split of hte sample into training and test sets.
+- It can give biased quality estimates for small samples.
+
+3.) Suppose you use k-fold cross-validation to assess model quality. How many times should you train the model during this procedure?
+sol: k
+
+4.) Select correct statements about regularization.
++ Weight penality drives model parameters closer to zero and prevents the model from being too sensitive to small changes in features.
+- Weight peanlity reduces the number of model parameters and leads to faster training.
+- Reducing the training sample size makes data simpler and leads to better quality.
++ Regularization restricts model complexity (namely the scale of coefficients) to reduce overfitting. 
+
+
+#######################################################################################################
+QUIZ 3.1 
+1.)
+sol: 
+-Conv layer acts the same
+-Special case of fully connected layer
+
+2.)
+sol: Pool laryer reduces spatial D
+Provides translational invariance
+
+3.)
+sol: (3*3*3+1)*10 + (3*3*10+1)*20
+
+4.)
+sol: (k-1)*(n-1) + k
+
+
+
+#######################################################################################################
+QUIZ 4.1 WORD EMBEDDINGS
+1.) Which of the following is true about word2vec?
+sol:
+- Outputs are linear functions of inputs
+- It requires human-defined semantic relations
++ It requires a text corpora for training
+- It uses convolutional layers and pooling
+- It has one trainable parameter per word 
+
+notes, in order above:
+- NN's are not linear.
+- word2vec is unsupervised.
++ Yes, you need text to train.
+- No, convolutional and pooling layers are most often used for image data. word2vec uses shallow dense layers.
+- No, it has a VECTOR per word, hence word2vec.
+
+
+2.) How can you train word2vec?
+sol:
++ By minimizing cross-entropy (aka max likelihood)
++ By learning to predict an omitted word by context
+- By changing the order of the words in the corpora
++ Applying stochastic gradient descent 
+- By minimizing distance between human defined synonyms and vice versa
++ By learning to predict context given a word.
+
+notes, in order above:
++ Cross-entropy is akin to the distance between two probability distributions, so minimizing it shows our words are similar.
++ Yes, this is the Continuous Bag of Words (CBOW) approach.
+- No, CBOW is order agnostic.
++ SGD is the way to minimize cross-entropy loss.
+- No, word2vec doesn't rely on human defined semantics.
++ Yes, this is the Skip-Gram approach.
+
+
+3.) Using an online demo of word2vec, find a synonym for "weltschmerz".
+sol: despair
+notes: Use http://bionlp-www.utu.fi/wv_demo/. 
+
+4.) Which is an appropriate way to measure similarity between word vectors v1 and v2? (more=better_)
+sol:
+-||v1-v2|| and cos(v1,v2) both increase as v1 approaches v2.
+
+
+
+
+#######################################################################################################
+QUIZ 5.1 RNN and Backpropagation
+
+1.) Consider a task with input sequences of fiexed length. Could RNN architecture still be useful?
+sol: Yes
+notes: It's not sequential data but it may use a lot fewer parameters and so might be useful.
+
+2.) Consider a RNN for language generation: \hat{y}_t is an output at each timestep, L is a length of an input sequence, N is a number of words in the vocabulary. Choose the correct statement about \hat{y}_t.
+sol:
++ \hat{y}_t is a vector of length N
+- \hat{y}_t is a vector of length L-t
+- \hat{y}_t is a vector of length L x N
++ Each element of \hat{y}_t is either 0 or 1
+- Each element of \hat{y}_t is a number from 0 and 1
+- Each element of \hat{y}_t is a number from 0 to N
+
+notes: The output is a distribution over the vocabulary, so \hat{y}_t is of length N. Since its elements are probabilities, the outputs are floats in [0,1] summing to 1.
+
+3.) Consider the RNN from lecture with
+h_t = f_t(Vx_t + Wh_{t-1} + b_h)
+\hat{y}_t = f_y(Uh_t + b_y)
+Calculate the gradient of loss L wrt bias vector b_y. That is, find \pdv{L}{b_y}.
+sol:
+\sum_{t=0}^T [ \pdv{L}{\hat{y}_t \pdv{\hat{y}_t}{b_y}]
+
+4.) Consider the same RNN. Calculate the gradient \pdv{L}{b_h}.
+sol:
+\sum_{t=0}^T [ \pdv{L}{\hat{y}_t \pdv{\hat{y}_t}{h_t} \sum_{k=0}^t (\prod_{i=k+1}^t\pdv{h_i}{h_{i-1}})\pdv{\hat{h}_k}{b_h}  ]
+
